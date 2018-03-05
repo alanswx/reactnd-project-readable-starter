@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
 import { Menu } from 'semantic-ui-react'
 import { withRouter } from 'react-router'
+import * as ReadableAPI from '../utils/ReadableAPI'
 
 
 
@@ -14,13 +15,25 @@ class PostDetail extends Component {
   state = {
     column: null,
     direction: null,
-    category: null
+    category: null,
+    comments: null
   }
 
   handleCategoryItemClick = (e, { name }) => this.setState({ category: name })
 
   handleNewItemClick = (e, { name }) => console.log({name})
 
+  componentDidMount(){
+
+    console.log(this.props.id)
+    ReadableAPI.getCommentsForPost(this.props.id).then((comments)=>{
+      console.log(comments)
+      this.setState(() => ({
+        comments: comments,
+      }))
+
+    })
+  }
 
   handleSort = clickedColumn => () => {
     const { column, direction } = this.state
