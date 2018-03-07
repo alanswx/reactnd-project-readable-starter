@@ -5,8 +5,8 @@ import './App.css';
 import * as ReadableAPI from '../utils/ReadableAPI'
 import CategoryTable from './CategoryTable.js'
 import PostDetail from './PostDetail.js'
+import PostEdit from './PostEdit.js'
 import { upvotePost, downvotePost, updatePost, setPost, updateComment} from '../actions'
-import { Link } from 'react-router-dom'
 import { withRouter } from 'react-router'
 
 
@@ -43,7 +43,11 @@ class App extends Component {
         <CategoryTable categories={this.state.categories}/>
         </div>
       )}/>
-      <Route  path="/post/:id" render={({history,match})=>(
+      <Route exact path="/post/edit/:id" render={({history,match})=>(
+        <PostEdit id={match.params.id} categories={this.state.categories}/>
+
+      )}/>
+      <Route exact path="/post/:id" render={({history,match})=>(
         <PostDetail id={match.params.id} categories={this.state.categories}/>
       )}/>
 

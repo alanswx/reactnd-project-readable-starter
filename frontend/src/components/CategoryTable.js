@@ -6,7 +6,10 @@ import  Timestamp from 'react-timestamp';
 import { Menu } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { withRouter } from 'react-router'
+import { List } from 'semantic-ui-react'
 
+//TODO - try to create a UUID and use it for the new link
+import {default as UUID} from "node-uuid";
 
 
 
@@ -85,7 +88,7 @@ class CategoryTable extends Component {
       <Menu.Item>
         <b>Category:</b>
       </Menu.Item>
-      <Menu.Item name='all' active={category === null} onClick={this.handleCategoryItemClick}>
+      <Menu.Item key='all' name='all' active={category === null} onClick={this.handleCategoryItemClick}>
         All
       </Menu.Item>
 
@@ -95,7 +98,7 @@ class CategoryTable extends Component {
       {
         categories && categories.categories.map( (cat)=> {
           return (
-            <Menu.Item name={cat.path} active={category === cat.path} onClick={this.handleCategoryItemClick}>
+            <Menu.Item key={cat.path} name={cat.path} active={category === cat.path} onClick={this.handleCategoryItemClick}>
               {cat.name}
             </Menu.Item>
           )
@@ -124,8 +127,14 @@ class CategoryTable extends Component {
             <Table.HeaderCell sorted={column === 'voteScore' ? direction : null} onClick={this.handleSort('voteScore')}>
               Score
             </Table.HeaderCell>
+            <Table.HeaderCell sorted={column === 'commentCount' ? direction : null} onClick={this.handleSort('commentCount')}>
+              Comments
+            </Table.HeaderCell>
             <Table.HeaderCell sorted={column === 'timestamp' ? direction : null} onClick={this.handleSort('timestamp')}>
               Time
+            </Table.HeaderCell>
+            <Table.HeaderCell>
+              Actions
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
@@ -140,7 +149,16 @@ class CategoryTable extends Component {
               <Table.Cell>{table.author}</Table.Cell>
               <Table.Cell>{table.category}</Table.Cell>
               <Table.Cell>{table.voteScore}</Table.Cell>
+              <Table.Cell>{table.commentCount}</Table.Cell>
               <Table.Cell><Timestamp time={table.timestamp/1000} format='ago'/></Table.Cell>
+              <Table.Cell>
+              <List horizontal link>
+                <List.Item as='a' icon='thumbs outline up'/>
+                <List.Item as='a' icon='thumbs outline down'/>
+                <List.Item as='a' icon='pencil'/>
+                <List.Item as='a' icon='trash'/>
+              </List>
+              </Table.Cell>
             </Table.Row>)
           }
           })

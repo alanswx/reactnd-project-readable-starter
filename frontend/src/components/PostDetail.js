@@ -1,31 +1,26 @@
 import React, { Component } from 'react';
-import { Table } from 'semantic-ui-react'
+import {  Item } from 'semantic-ui-react'
 import { upvotePost, downvotePost, updatePost, setPost, updateComment} from '../actions'
 import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
 import { Menu } from 'semantic-ui-react'
 import { withRouter } from 'react-router'
 import * as ReadableAPI from '../utils/ReadableAPI'
-
+import { Icon } from 'semantic-ui-react'
+import CommentsList from './CommentsList.js'
+import { Link } from 'react-router-dom'
 
 
 
 class PostDetail extends Component {
 
   state = {
-    column: null,
-    direction: null,
-    category: null,
-    comments: null
+    comments: null,
   }
 
-  handleCategoryItemClick = (e, { name }) => this.setState({ category: name })
-
-  handleNewItemClick = (e, { name }) => console.log({name})
 
   componentDidMount(){
 
-    console.log(this.props.id)
     ReadableAPI.getCommentsForPost(this.props.id).then((comments)=>{
       console.log(comments)
       this.setState(() => ({
@@ -35,30 +30,7 @@ class PostDetail extends Component {
     })
   }
 
-  handleSort = clickedColumn => () => {
-    const { column, direction } = this.state
-
-    if (column !== clickedColumn) {
-      this.setState({
-        column: clickedColumn,
-        direction: 'ascending',
-      })
-
-      return
-    }
-
-    this.setState({
-      direction: direction === 'ascending' ? 'descending' : 'ascending',
-    })
-  }
-/* FROM: https://codepen.io/austinlyons/pen/YpmyJB */
-  compareBy(key) {
-    return function (a, b) {
-      if (a[key] < b[key]) return -1;
-      if (a[key] > b[key]) return 1;
-      return 0;
-    };
-  }
+  handleEditItemClick = (e, { name }) => this.setState({ edit: true })
 
 
   /* some of the sort code, and formatting taken from semantic ui example code  */
@@ -76,95 +48,70 @@ class PostDetail extends Component {
             title
             voteScore
     */
-    const { column, direction } = this.state
-    const { post, categories, id } = this.props
+    const { post } = this.props
 
-    const { category } = this.state
-
-    let thisPost = post.filter( (table)=>{return table.id===id})[0]
-    console.log("thispost")
-    console.log(post)
-    console.log(id)
-    console.log(thisPost)
-    /* a lot of react examples sort the array that is kept in the local state.
-      because we are handling the posts in the redux store, I didn't think it made sense to
-      modify them. This way we just sort a copy before rendering. We change the local state variables
-      direction and column - this causes us to be called to re-render */
-    let arrayCopy = [...post];
-    if (this.state.column)
-      arrayCopy.sort(this.compareBy(this.state.column));
-    if (direction==='descending')
-      arrayCopy.reverse()
     return (
-      <div>
-      <Menu>
-      <Menu.Item>
-        <b>Category:</b>
-      </Menu.Item>
-      <Menu.Item name='all' active={category === null} onClick={this.handleCategoryItemClick}>
-        All
-      </Menu.Item>
+              <div>
+              <Menu>
+              <Menu.Item name='title' >
+              { post &&
+                  <b>Post: {post.title}</b>
+              }
+              </Menu.Item>
 
-      {
-        console.log(categories)
-      }
-      {
-        categories && categories.categories.map( (cat)=> {
-          return (
-            <Menu.Item name={cat.path} active={category === cat.path} onClick={this.handleCategoryItemClick}>
-              {cat.name}
-            </Menu.Item>
-          )
-        })
-      }
 
-        <Menu.Menu position='right'>
-          <Menu.Item name='new' active={category === 'new'} onClick={this.handleNewItemClick}>
-           AJS New Post
-          </Menu.Item>
-        </Menu.Menu>
-      </Menu>
-      <Table sortable celled fixed>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell sorted={column === 'title' ? direction : null} onClick={this.handleSort('title')}>
-              Title
-            </Table.HeaderCell>
-            <Table.HeaderCell sorted={column === 'author' ? direction : null} onClick={this.handleSort('author')}>
-              Author
-            </Table.HeaderCell>
-            <Table.HeaderCell sorted={column === 'category' ? direction : null} onClick={this.handleSort('category')}>
-              Category
-            </Table.HeaderCell>
-            <Table.HeaderCell sorted={column === 'voteScore' ? direction : null} onClick={this.handleSort('voteScore')}>
-              Score
-            </Table.HeaderCell>
-            <Table.HeaderCell sorted={column === 'timestamp' ? direction : null} onClick={this.handleSort('timestamp')}>
-              Time
-            </Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          { thisPost &&
-              <Table.Row key={thisPost.id}>
-              <Table.Cell>{thisPost.title}</Table.Cell>
-              <Table.Cell>{thisPost.author}</Table.Cell>
-              <Table.Cell>{thisPost.category}</Table.Cell>
-              <Table.Cell>{thisPost.voteScore}</Table.Cell>
-              <Table.Cell><Timestamp time={thisPost.timestamp/1000} format='ago'/></Table.Cell>
-            </Table.Row>
+
+                <Menu.Menu position='right'>
+                <Menu.Item name='edit'>
+                <Link to={"/post/edit/" + post.id}>
+                <Icon name='pencil' />
+                </Link>
+                </Menu.Item>
+                <Menu.Item name='trash'  onClick={this.handleTrashItemClick}>
+                <Icon link name='trash outline' />
+                </Menu.Item>
+                </Menu.Menu>
+              </Menu>
+
+              { post &&
+
+              <Item.Group>
+                <Item>
+
+                  <Item.Content>
+                    <Item.Header>{post.title}</Item.Header>
+                    <Item.Meta>
+                    <span><Icon name='user'/>{post.author}</span>
+                    <span>Category: {post.category}</span>
+                    <span>Score: {post.voteScore}</span>
+                    <span>Published: <Timestamp time={post.timestamp/1000} format='ago'/></span>
+                    </Item.Meta>
+                    <Item.Description>{post.body}</Item.Description>
+                    <CommentsList comments={this.state.comments}/>
+
+                  </Item.Content>
+                </Item>
+
+              </Item.Group>
+
             }
-        </Table.Body>
-      </Table>
-      </div>
 
-    )
-  }
+
+
+              </div>
+
+            )
+          }
+
  }
 
- function mapStateToProps ({ post, comment }) {
+ function mapStateToProps ({ post, comment },ownProps) {
+   let thisPost = Object.values(post)
+   if (thisPost.length)
+    thisPost = thisPost.filter((apost)=>{return apost.id===ownProps.id})[0]
+
    return {
-     post: Object.values(post),
+     post: thisPost,
      comment: comment
    }
  }
