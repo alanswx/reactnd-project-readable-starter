@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { upvotePost, downvotePost, updatePost, setPost, updateComment} from '../actions'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
-import { Form, TextArea} from 'semantic-ui-react'
+import { Form, TextArea, Button } from 'semantic-ui-react'
+import PropTypes from "prop-types";
 
 
 
@@ -40,6 +41,20 @@ class PostEdit extends Component {
         })
       }
     }
+    static contextTypes = {
+      router: PropTypes.shape({
+        history: PropTypes.shape({
+          push: PropTypes.func.isRequired,
+          replace: PropTypes.func.isRequired
+        }).isRequired,
+        staticContext: PropTypes.object
+      }).isRequired
+    };
+    handleOnClick = () => {
+      console.log(this.context)
+      this.context.router.history.goBack()
+      //this.context.router.history.push('')
+}
 
   /* from https://react.semantic-ui.com/collections/form#form-example-capture-values  */
   handleChange = (e, { name, value }) => this.setState({ [name]: value })
@@ -93,6 +108,7 @@ class PostEdit extends Component {
     }
 
       return (
+        <div>
           <Form onSubmit={this.handleSubmit}>
           <Form.Input  label='Title' placeholder='Title' name='title'  value={this.state.title} onChange={this.handleChange} />
           <Form.Select label='Category' options={options} placeholder='Category' name='category' value={this.state.category}  onChange={this.handleChange}/>
@@ -100,6 +116,8 @@ class PostEdit extends Component {
           <Form.Input  label='Body' control={TextArea}  placeholder='Body' name='body' value={this.state.body} onChange={this.handleChange} />
           <Form.Button content='Submit' />
           </Form>
+            <Button onClick={this.handleOnClick}>Cancel</Button>
+          </div>
             )
           }
  }

@@ -3,7 +3,7 @@ import { Table } from 'semantic-ui-react'
 import { upvotePost, downvotePost, updatePost, setPost, updateComment} from '../actions'
 import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
-import { Menu } from 'semantic-ui-react'
+import { Menu, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import { List } from 'semantic-ui-react'
@@ -153,9 +153,9 @@ class CategoryTable extends Component {
               <Table.Cell><Timestamp time={table.timestamp/1000} format='ago'/></Table.Cell>
               <Table.Cell>
               <List horizontal link>
-                <List.Item as='a' icon='thumbs outline up'/>
+               <List.Item as='a' icon='thumbs outline up'/>
                 <List.Item as='a' icon='thumbs outline down'/>
-                <List.Item as='a' icon='pencil'/>
+                <List.Item><Link to={"/post/edit/" + table.id}><Icon name='pencil' /></Link></List.Item>
                 <List.Item as='a' icon='trash'/>
               </List>
               </Table.Cell>
