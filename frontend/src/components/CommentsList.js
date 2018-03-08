@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Comment, Form, Header } from 'semantic-ui-react'
-import { upvotePost, downvotePost, updatePost, setPost, updateComment} from '../actions'
+import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
 import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
 import { withRouter } from 'react-router'
@@ -80,9 +80,8 @@ voteScore
   }
 }
 
- function mapStateToProps ({ post, comment }) {
+ function mapStateToProps ({  comment }) {
    return {
-     post: Object.values(post),
      comment: comment
    }
  }
@@ -92,7 +91,7 @@ voteScore
      upvotePost: (data) => dispatch(upvotePost(data)),
      downvotePost: (data) => dispatch(downvotePost(data)),
      updatePost: (data) => dispatch(updatePost(data)),
-     setPost: (data) => dispatch(setPost(data)),
+     setPosts: (data) => dispatch(setPosts(data)),
      updateComment: (data) => dispatch(updateComment(data)),
    }
  }

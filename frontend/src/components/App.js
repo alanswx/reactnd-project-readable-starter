@@ -6,7 +6,7 @@ import * as ReadableAPI from '../utils/ReadableAPI'
 import CategoryTable from './CategoryTable.js'
 import PostDetail from './PostDetail.js'
 import PostEdit from './PostEdit.js'
-import { upvotePost, downvotePost, updatePost, setPost, updateComment} from '../actions'
+import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
 import { withRouter } from 'react-router'
 
 
@@ -31,7 +31,7 @@ class App extends Component {
     })
     ReadableAPI.getAllPosts().then((posts)=>{
       console.log(posts)
-      this.props.setPost(posts)
+      this.props.setPosts(posts)
     })
   }
 
@@ -57,10 +57,10 @@ class App extends Component {
   }
 }
 
-function mapStateToProps ({ post, comment }) {
+function mapStateToProps ({ posts, comment }) {
 
   return {
-    post: Object.keys(post),
+    posts: Object.keys(posts),
     comment: comment
   }
 }
@@ -70,7 +70,7 @@ function mapDispatchToProps (dispatch) {
     upvotePost: (data) => dispatch(upvotePost(data)),
     downvotePost: (data) => dispatch(downvotePost(data)),
     updatePost: (data) => dispatch(updatePost(data)),
-    setPost: (data) => dispatch(setPost(data)),
+    setPosts: (data) => dispatch(setPosts(data)),
     updateComment: (data) => dispatch(updateComment(data)),
   }
 }

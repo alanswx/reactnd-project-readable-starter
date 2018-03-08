@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Table } from 'semantic-ui-react'
-import { upvotePost, downvotePost, updatePost, setPost, updateComment} from '../actions'
+import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
 import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
 import { Menu, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { withRouter } from 'react-router'
 import { List } from 'semantic-ui-react'
+import PropTypes from "prop-types";
 
 //TODO - try to create a UUID and use it for the new link
 import {default as UUID} from "node-uuid";
@@ -25,6 +26,26 @@ class CategoryTable extends Component {
 
   handleNewItemClick = (e, { name }) => console.log({name})
 
+  /*
+   From:
+   https://stackoverflow.com/questions/29244731/react-router-how-to-manually-invoke-link
+  */
+
+      static contextTypes = {
+        router: PropTypes.shape({
+          history: PropTypes.shape({
+            push: PropTypes.func.isRequired,
+            replace: PropTypes.func.isRequired
+          }).isRequired,
+          staticContext: PropTypes.object
+        }).isRequired
+      };
+
+      handleNewItemClick = (e, { name }) => {
+        // create a UUID
+        let newPath = "/post/edit/"+UUID.v4()
+        this.context.router.history.push(newPath)
+  }
 
   handleSort = clickedColumn => () => {
     const { column, direction } = this.state
@@ -68,7 +89,7 @@ class CategoryTable extends Component {
             voteScore
     */
     const { column, direction } = this.state
-    const { post, categories } = this.props
+    const { posts, categories } = this.props
 
     const { category } = this.state
 
@@ -77,7 +98,7 @@ class CategoryTable extends Component {
       because we are handling the posts in the redux store, I didn't think it made sense to
       modify them. This way we just sort a copy before rendering. We change the local state variables
       direction and column - this causes us to be called to re-render */
-    let arrayCopy = [...post];
+    let arrayCopy = [...posts];
     if (this.state.column)
       arrayCopy.sort(this.compareBy(this.state.column));
     if (direction==='descending')
@@ -171,9 +192,9 @@ class CategoryTable extends Component {
   }
  }
 
- function mapStateToProps ({ post, comment }) {
+ function mapStateToProps ({ posts, comment }) {
    return {
-     post: Object.values(post),
+     posts: Object.values(posts),
      comment: comment
    }
  }
@@ -183,7 +204,7 @@ class CategoryTable extends Component {
      upvotePost: (data) => dispatch(upvotePost(data)),
      downvotePost: (data) => dispatch(downvotePost(data)),
      updatePost: (data) => dispatch(updatePost(data)),
-     setPost: (data) => dispatch(setPost(data)),
+     setPosts: (data) => dispatch(setPosts(data)),
      updateComment: (data) => dispatch(updateComment(data)),
    }
  }

@@ -3,19 +3,19 @@ import {
   UPVOTE_POST,
   DOWNVOTE_POST,
   UPDATE_POST,
-  SET_POST,
+  SET_POSTS,
   UPDATE_COMMENT
 } from '../actions'
 
-function post (state={},action) {
+function posts (state={},action) {
   switch(action.type){
     case UPVOTE_POST:
     case DOWNVOTE_POST:
     case UPDATE_POST:
-    case SET_POST:
-     const {post }= action
+    case SET_POSTS:
+     const {posts }= action
      return {
-       ...post
+       ...posts
      }
     default:
       return state
@@ -107,6 +107,6 @@ function calendar (state = initialCalendarState, action) {
 }
 */
 export default combineReducers({
-  post,
+  posts,
   comment
 })

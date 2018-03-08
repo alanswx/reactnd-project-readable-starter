@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { upvotePost, downvotePost, updatePost, setPost, updateComment} from '../actions'
+import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 import { Form, TextArea, Button } from 'semantic-ui-react'
@@ -41,6 +41,13 @@ class PostEdit extends Component {
         })
       }
     }
+
+
+/*
+ From:
+ https://stackoverflow.com/questions/29244731/react-router-how-to-manually-invoke-link
+*/
+
     static contextTypes = {
       router: PropTypes.shape({
         history: PropTypes.shape({
@@ -50,8 +57,10 @@ class PostEdit extends Component {
         staticContext: PropTypes.object
       }).isRequired
     };
+
     handleOnClick = () => {
-      console.log(this.context)
+      // or we can "push" a different destination
+      // goback is nice because it takes you back to where you came from
       this.context.router.history.goBack()
       //this.context.router.history.push('')
 }
@@ -122,12 +131,27 @@ class PostEdit extends Component {
           }
  }
 
- function mapStateToProps ({ post, comment },ownProps) {
+ function mapStateToProps ({ posts, comment },ownProps) {
 
-   let thisPost = Object.values(post)
+   let thisPost = Object.values(posts)
    if (thisPost.length)
     thisPost = thisPost.filter((apost)=>{return apost.id===ownProps.id})[0]
 
+   if (!thisPost)
+    thisPost  = {
+     author: '',
+     body: '',
+     category: '',
+     commentCount: 0,
+     deleted: false,
+     id: ownProps.id,
+     timestamp: Date.now(), // TODO AJS - add time from javascript
+     title: '',
+     voteScore: 0
+   }
+
+   console.log("mapStateToProps")
+   console.log(thisPost)
    return {
      post: thisPost,
      comment: comment
@@ -139,7 +163,7 @@ class PostEdit extends Component {
      upvotePost: (data) => dispatch(upvotePost(data)),
      downvotePost: (data) => dispatch(downvotePost(data)),
      updatePost: (data) => dispatch(updatePost(data)),
-     setPost: (data) => dispatch(setPost(data)),
+     setPosts: (data) => dispatch(setPosts(data)),
      updateComment: (data) => dispatch(updateComment(data)),
    }
  }

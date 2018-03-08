@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {  Item } from 'semantic-ui-react'
-import { upvotePost, downvotePost, updatePost, setPost, updateComment} from '../actions'
+import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
 import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
 import { Menu } from 'semantic-ui-react'
@@ -29,8 +29,6 @@ class PostDetail extends Component {
 
     })
   }
-
-  handleEditItemClick = (e, { name }) => this.setState({ edit: true })
 
 
   /* some of the sort code, and formatting taken from semantic ui example code  */
@@ -105,8 +103,8 @@ class PostDetail extends Component {
 
  }
 
- function mapStateToProps ({ post, comment },ownProps) {
-   let thisPost = Object.values(post)
+ function mapStateToProps ({ posts, comment },ownProps) {
+   let thisPost = Object.values(posts)
    if (thisPost.length)
     thisPost = thisPost.filter((apost)=>{return apost.id===ownProps.id})[0]
 
@@ -121,7 +119,7 @@ class PostDetail extends Component {
      upvotePost: (data) => dispatch(upvotePost(data)),
      downvotePost: (data) => dispatch(downvotePost(data)),
      updatePost: (data) => dispatch(updatePost(data)),
-     setPost: (data) => dispatch(setPost(data)),
+     setPosts: (data) => dispatch(setPosts(data)),
      updateComment: (data) => dispatch(updateComment(data)),
    }
  }
