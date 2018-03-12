@@ -5,13 +5,13 @@ export const SET_POSTS='SET_POSTS'
 export const UPDATE_COMMENT='UPDATE_COMMENT'
 
 
-export function upvotePost ( {postid}){
+export function upvotePost ( postid){
   return {
     type: UPVOTE_POST,
     postid,
   }
 }
-export function downvotePost ( {postid}){
+export function downvotePost ( postid){
   return {
     type: DOWNVOTE_POST,
     postid,

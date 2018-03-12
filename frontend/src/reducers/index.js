@@ -7,11 +7,44 @@ import {
   UPDATE_COMMENT
 } from '../actions'
 
+
+// AJS TODO -- THIS IS BROKEN -- loop through the state, until we match the id
+
 function posts (state={},action) {
   switch(action.type){
     case UPVOTE_POST:
+    //console.log(state)
+
+
+    for (const [key, value] of Object.entries(state)) {
+      //console.log(key)
+      //console.log(value)
+      if (value.id===action.postid)
+      {
+        value.voteScore++
+      }
+     }
+    return state
+
     case DOWNVOTE_POST:
+      for (const [key, value] of Object.entries(state)) {
+        //console.log(key)
+        //console.log(value)
+        if (value.id===action.postid)
+        {
+          value.voteScore--
+        }
+       }
+      return state
     case UPDATE_POST:
+      state[action.post.id] = {
+        ...action.post
+      }
+      return {
+        ...state
+      }
+
+
     case SET_POSTS:
      const {posts }= action
      return {

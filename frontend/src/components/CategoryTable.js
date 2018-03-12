@@ -24,7 +24,15 @@ class CategoryTable extends Component {
 
   handleCategoryItemClick = (e, { name }) => this.setState({ category: name })
 
-  handleNewItemClick = (e, { name }) => console.log({name})
+  handleUpVote = (id) => {
+    console.log("handleUpVote:"+id)
+    this.props.upvotePost(id)
+  }
+  handleDownVote = (id) => {
+    console.log("handleDownVote:" +id)
+
+    this.props.downvotePost(id)
+  }
 
   /*
    From:
@@ -174,8 +182,8 @@ class CategoryTable extends Component {
               <Table.Cell><Timestamp time={table.timestamp/1000} format='ago'/></Table.Cell>
               <Table.Cell>
               <List horizontal link>
-               <List.Item as='a' icon='thumbs outline up'/>
-                <List.Item as='a' icon='thumbs outline down'/>
+               <List.Item as='a' icon='thumbs outline up' onClick={()=>this.handleUpVote(table.id)}/>
+                <List.Item as='a' icon='thumbs outline down' onClick={()=>this.handleDownVote(table.id)}/>
                 <List.Item><Link to={"/post/edit/" + table.id}><Icon name='pencil' /></Link></List.Item>
                 <List.Item as='a' icon='trash'/>
               </List>

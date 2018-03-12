@@ -89,6 +89,8 @@ class PostEdit extends Component {
     this.props.updatePost(newPost)
 //    setPost
 //    updatePost
+    this.context.router.history.goBack()
+
   }
 
 
