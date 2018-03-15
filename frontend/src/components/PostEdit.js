@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { upvotePost, downvotePost, updatePost, newPost, setPosts, updateComment} from '../actions'
 import { connect } from 'react-redux'
-import { Form, TextArea, Button } from 'semantic-ui-react'
+import { Form, TextArea, Breadcrumb } from 'semantic-ui-react'
 import PropTypes from "prop-types";
+import { Link } from 'react-router-dom'
 
 
 
@@ -56,11 +57,13 @@ class PostEdit extends Component {
       }).isRequired
     };
 
-    handleOnClick = () => {
+    handleCancelButton = (evt) => {
+      //console.log("BUTTON ON CLICK")
       // or we can "push" a different destination
       // goback is nice because it takes you back to where you came from
       this.context.router.history.goBack()
       //this.context.router.history.push('')
+      evt.preventDefault()
 }
 
   /* from https://react.semantic-ui.com/collections/form#form-example-capture-values  */
@@ -68,9 +71,9 @@ class PostEdit extends Component {
 
   handleSubmit = () => {
     const { author,body,category,title,commentCount,deleted,id,timestamp,voteScore} = this.state
-
-    console.log("author: "+author)
-    console.log(this.state)
+    //console.log("HANDLE SUBMIT")
+    //console.log("author: "+author)
+    //console.log(this.state)
 
     let newPost = {
       author: author,
@@ -124,15 +127,24 @@ class PostEdit extends Component {
 
       return (
         <div>
+          <Breadcrumb size='mini'>
+            <Breadcrumb.Section ><Link to={"/"}>Home</Link></Breadcrumb.Section>
+            <Breadcrumb.Divider icon='right chevron' />
+            <Breadcrumb.Section ><Link to={"/"+(this.state.category?this.state.category:"unknown")+"/"+this.state.id}>Post</Link></Breadcrumb.Section>
+            <Breadcrumb.Divider icon='right chevron' />
+            <Breadcrumb.Section active><Link to={"/"}>Edit</Link></Breadcrumb.Section>
+          </Breadcrumb>
           <Form onSubmit={this.handleSubmit}>
-          <Form.Input  label='Title' placeholder='Title' name='title'  value={this.state.title} onChange={this.handleChange} />
-          <Form.Select label='Category' options={options} placeholder='Category' name='category' value={this.state.category}  onChange={this.handleChange}/>
-          <Form.Input  label='Author' placeholder='Author' name='author'  value={this.state.author} onChange={this.handleChange} />
-          <Form.Input  label='Body' control={TextArea}  placeholder='Body' name='body' value={this.state.body} onChange={this.handleChange} />
-          <Form.Button content='Submit' />
+            <Form.Input  label='Title' placeholder='Title' name='title'  value={this.state.title} onChange={this.handleChange} />
+            <Form.Select label='Category' options={options} placeholder='Category' name='category' value={this.state.category}  onChange={this.handleChange}/>
+            <Form.Input  label='Author' placeholder='Author' name='author'  value={this.state.author} onChange={this.handleChange} />
+            <Form.Input  label='Body' control={TextArea}  placeholder='Body' name='body' value={this.state.body} onChange={this.handleChange} />
+            <Form.Group inline>
+              <Form.Button content='Submit' />
+              <Form.Button onClick={this.handleCancelButton}>Cancel</Form.Button>
+            </Form.Group>
           </Form>
-            <Button onClick={this.handleOnClick}>Cancel</Button>
-          </div>
+        </div>
             )
           }
  }
@@ -160,8 +172,8 @@ class PostEdit extends Component {
      thisPost.newPost=false
    }
 
-   console.log("mapStateToProps")
-   console.log(thisPost)
+   //console.log("mapStateToProps")
+   //console.log(thisPost)
    return {
      post: thisPost,
      comment: comment

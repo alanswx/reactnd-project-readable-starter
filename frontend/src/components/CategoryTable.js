@@ -3,7 +3,7 @@ import { Table } from 'semantic-ui-react'
 import { upvotePost, downvotePost, deletePost, updatePost, setPosts, updateComment} from '../actions'
 import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
-import { Menu, Icon } from 'semantic-ui-react'
+import { Menu, Icon, Breadcrumb } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { List } from 'semantic-ui-react'
 import PropTypes from "prop-types";
@@ -21,7 +21,6 @@ class CategoryTable extends Component {
     category: null
   }
 
-  handleCategoryItemClick = (e, { name }) => this.setState({ category: name })
 
 
   /*
@@ -38,6 +37,14 @@ class CategoryTable extends Component {
           staticContext: PropTypes.object
         }).isRequired
       };
+
+      handleCategoryItemClick = (e, { name }) => {
+        //this.setState({ category: name })
+        let newPath = "/"
+        if (name!=="all")
+           newPath = "/"+name
+        this.context.router.history.push(newPath)
+      }
 
       handleNewItemClick = (e, { name }) => {
         // create a UUID
@@ -89,7 +96,7 @@ class CategoryTable extends Component {
     const { column, direction } = this.state
     const { posts, categories } = this.props
 
-    const { category } = this.state
+    const { category } = this.props
 
 
     /* a lot of react examples sort the array that is kept in the local state.
@@ -103,11 +110,14 @@ class CategoryTable extends Component {
       arrayCopy.reverse()
     return (
       <div>
+      <Breadcrumb size='mini'>
+        <Breadcrumb.Section active>Home</Breadcrumb.Section>
+      </Breadcrumb>
       <Menu>
       <Menu.Item>
         <b>Category:</b>
       </Menu.Item>
-      <Menu.Item key='all' name='all' active={category === null} onClick={this.handleCategoryItemClick}>
+      <Menu.Item key='all' name='all' active={category === null || category ==="all"} onClick={this.handleCategoryItemClick}>
         All
       </Menu.Item>
       {
@@ -162,7 +172,7 @@ class CategoryTable extends Component {
             }
             else {
               return (<Table.Row key={table.id}>
-              <Table.Cell><Link to={"/post/" + table.id}>{table.title}</Link></Table.Cell>
+              <Table.Cell><Link to={"/"+table.category+"/" + table.id}>{table.title}</Link></Table.Cell>
               <Table.Cell>{table.author}</Table.Cell>
               <Table.Cell>{table.category}</Table.Cell>
               <Table.Cell>{table.voteScore}</Table.Cell>

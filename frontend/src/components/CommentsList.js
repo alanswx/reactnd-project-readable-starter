@@ -142,21 +142,24 @@ voteScore
               {comment.newComment && (
 
               <Header as='h3' dividing>New Comment</Header>
-            )}              <Comment.Content>
+            )}
+            <Comment.Content>
 
+              {!comment.newComment && (
+                <div>
                 <Comment.Author as='a'>{comment.author}</Comment.Author>
                 <Comment.Metadata>
-                <div>Published: <Timestamp time={comment.timestamp/1000} format='ago'/></div>
-                <div>Score: {comment.voteScore}</div>
-                <Comment.Actions>
-                <Comment.Action><Icon link name='thumbs outline up' onClick={()=>this.props.upvoteComment(comment.id)}/></Comment.Action>
-                <Comment.Action><Icon link name='thumbs outline down' onClick={()=>this.props.downvoteComment(comment.id)}/></Comment.Action>
-                <Comment.Action><Icon link name='pencil' onClick={()=>this.toggleCommentEdit(comment.id)} /></Comment.Action>
-                <Comment.Action><Icon link name='trash outline' onClick={()=>this.props.deleteComment(comment.id)} /></Comment.Action>
-                </Comment.Actions>
-
+                  <div>Published: <Timestamp time={comment.timestamp/1000} format='ago'/></div>
+                  <div>Score: {comment.voteScore}</div>
+                  <Comment.Actions>
+                    <Comment.Action><Icon link name='thumbs outline up' onClick={()=>this.props.upvoteComment(comment.id)}/></Comment.Action>
+                    <Comment.Action><Icon link name='thumbs outline down' onClick={()=>this.props.downvoteComment(comment.id)}/></Comment.Action>
+                    <Comment.Action><Icon link name='pencil' onClick={()=>this.toggleCommentEdit(comment.id)} /></Comment.Action>
+                    <Comment.Action><Icon link name='trash outline' onClick={()=>this.props.deleteComment(comment.id)} /></Comment.Action>
+                  </Comment.Actions>
                 </Comment.Metadata>
-
+                </div>
+              )}
 
                 {(this.state.editList.includes(comment.id) || comment.newComment) && (
 
@@ -175,7 +178,7 @@ voteScore
                   <Comment.Text>{comment.body}</Comment.Text>
                 )}
 
-              </Comment.Content>
+                  </Comment.Content>
             </Comment>
               )
             }

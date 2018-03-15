@@ -8,6 +8,7 @@ import PostDetail from './PostDetail.js'
 import PostEdit from './PostEdit.js'
 import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
 import { withRouter } from 'react-router'
+import { Header, Icon } from 'semantic-ui-react'
 
 
 
@@ -43,16 +44,23 @@ class App extends Component {
   render() {
     return (
       <div className="app">
-      <Route exact path="/" render={({history})=> (
-        <div>
-        <CategoryTable categories={this.state.categories}/>
-        </div>
+      <Header as='h2'>
+        <Icon name='comments' />
+        <Header.Content>
+          Readable
+        </Header.Content>
+      </Header>      <Route exact path="/" render={({history})=> (
+        <CategoryTable category="all" categories={this.state.categories}/>
       )}/>
-      <Route exact path="/post/edit/:id" render={({history,match})=>(
+      <Route exact path="/:category" render={({history,match})=> (
+        <CategoryTable category={match.params.category} categories={this.state.categories}/>
+      )}/>
+
+      <Route exact path="/:category/edit/:id" render={({history,match})=>(
         <PostEdit id={match.params.id} categories={this.state.categories}/>
 
       )}/>
-      <Route exact path="/post/:id" render={({history,match})=>(
+      <Route exact path="/:category/:id" render={({history,match})=>(
         <PostDetail id={match.params.id} categories={this.state.categories}/>
       )}/>
 

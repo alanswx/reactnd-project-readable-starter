@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import {  Item } from 'semantic-ui-react'
-import {  updatePost, setPosts, updateComment, deletePost} from '../actions'
+import {  updatePost, setPosts, updateComment, deletePost, upvotePost, downvotePost} from '../actions'
 import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
-import { Menu } from 'semantic-ui-react'
-import { Icon } from 'semantic-ui-react'
+import { Item, Menu, Icon, Header, Breadcrumb} from 'semantic-ui-react'
 import CommentsList from './CommentsList.js'
 import { Link } from 'react-router-dom'
 import PropTypes from "prop-types";
@@ -51,30 +49,44 @@ class PostDetail extends Component {
     */
     const { post } = this.props
 
-    return (
+    if (!post) {
+      return (
+        <div>
+        <Breadcrumb size='mini'>
+          <Breadcrumb.Section ><Link to={"/"}>Home</Link></Breadcrumb.Section>
+          <Breadcrumb.Divider icon='right chevron' />
+          <Breadcrumb.Section active>Post</Breadcrumb.Section>
+        </Breadcrumb>
+
+        <Header size='huge'>404 Post Not Found</Header>
+        </div>
+      )
+    }
+    else
+      return (
               <div>
+              <Breadcrumb size='mini'>
+                <Breadcrumb.Section ><Link to={"/"}>Home</Link></Breadcrumb.Section>
+                <Breadcrumb.Divider icon='right chevron' />
+                <Breadcrumb.Section active>Post</Breadcrumb.Section>
+              </Breadcrumb>
               <Menu>
-              <Menu.Item name='title' >
-              { post &&
+                <Menu.Item name='title' >
                   <b>Post: {post.title}</b>
-              }
-              </Menu.Item>
-
-
-
+                </Menu.Item>
                 <Menu.Menu position='right'>
                   <Menu.Item name='edit'>
                     <Link to={"/post/edit/" + post.id}>
                       <Icon name='pencil' />
                     </Link>
-                </Menu.Item>
-                <Menu.Item name='trash'  onClick={()=>this.handleDelete(post.id)}>
-                  <Icon link name='trash outline' />
-                </Menu.Item>
+                  </Menu.Item>
+                  <Menu.Item as='a' icon='thumbs outline up' onClick={()=>this.props.upvotePost(post.id)}/>
+                  <Menu.Item as='a' icon='thumbs outline down' onClick={()=>this.props.downvotePost(post.id)}/>
+                  <Menu.Item name='trash'  onClick={()=>this.handleDelete(post.id)}>
+                    <Icon link name='trash outline' />
+                  </Menu.Item>
                 </Menu.Menu>
               </Menu>
-
-              { post &&
 
               <Item.Group>
                 <Item>
@@ -95,8 +107,6 @@ class PostDetail extends Component {
 
               </Item.Group>
 
-            }
-
 
 
               </div>
@@ -107,12 +117,15 @@ class PostDetail extends Component {
  }
 
  function mapStateToProps ({ posts, comment },ownProps) {
+
    let thisPost = Object.values(posts)
    if (thisPost.length)
     thisPost = thisPost.filter((apost)=>{return apost.id===ownProps.id})[0]
 
+  let copyPost = {...thisPost}
+
    return {
-     post: thisPost,
+     post: (thisPost)?copyPost:null,
      comment: comment
    }
  }
@@ -120,6 +133,8 @@ class PostDetail extends Component {
  function mapDispatchToProps (dispatch) {
    return {
      updatePost: (data) => dispatch(updatePost(data)),
+     upvotePost: (data) => dispatch(upvotePost(data)),
+     downvotePost: (data) => dispatch(downvotePost(data)),
      setPosts: (data) => dispatch(setPosts(data)),
      updateComment: (data) => dispatch(updateComment(data)),
      deletePost: (data) => dispatch(deletePost(data)),
