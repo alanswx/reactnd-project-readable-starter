@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Table } from 'semantic-ui-react'
-import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
+import { upvotePost, downvotePost, deletePost, updatePost, setPosts, updateComment} from '../actions'
 import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
 import { Menu, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
-import { withRouter } from 'react-router'
 import { List } from 'semantic-ui-react'
 import PropTypes from "prop-types";
 
@@ -24,15 +23,6 @@ class CategoryTable extends Component {
 
   handleCategoryItemClick = (e, { name }) => this.setState({ category: name })
 
-  handleUpVote = (id) => {
-    console.log("handleUpVote:"+id)
-    this.props.upvotePost(id)
-  }
-  handleDownVote = (id) => {
-    console.log("handleDownVote:" +id)
-
-    this.props.downvotePost(id)
-  }
 
   /*
    From:
@@ -120,10 +110,6 @@ class CategoryTable extends Component {
       <Menu.Item key='all' name='all' active={category === null} onClick={this.handleCategoryItemClick}>
         All
       </Menu.Item>
-
-      {
-        console.log(categories)
-      }
       {
         categories && categories.categories.map( (cat)=> {
           return (
@@ -167,7 +153,9 @@ class CategoryTable extends Component {
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
+
         <Table.Body>
+
           {arrayCopy && arrayCopy.length && arrayCopy.filter( (table)=>{return (category===null || category==='all' || table.category===category)}).map( (table) => {
             if (table.deleted===true) {
               return ( '' )
@@ -182,17 +170,18 @@ class CategoryTable extends Component {
               <Table.Cell><Timestamp time={table.timestamp/1000} format='ago'/></Table.Cell>
               <Table.Cell>
               <List horizontal link>
-               <List.Item as='a' icon='thumbs outline up' onClick={()=>this.handleUpVote(table.id)}/>
-                <List.Item as='a' icon='thumbs outline down' onClick={()=>this.handleDownVote(table.id)}/>
+               <List.Item as='a' icon='thumbs outline up' onClick={()=>this.props.upvotePost(table.id)}/>
+                <List.Item as='a' icon='thumbs outline down' onClick={()=>this.props.downvotePost(table.id)}/>
                 <List.Item><Link to={"/post/edit/" + table.id}><Icon name='pencil' /></Link></List.Item>
-                <List.Item as='a' icon='trash'/>
+                <List.Item as='a' icon='trash' onClick={()=>this.props.deletePost(table.id)}/>
               </List>
               </Table.Cell>
             </Table.Row>)
           }
           })
         }
-        </Table.Body>
+          </Table.Body>
+
       </Table>
       </div>
 
@@ -211,13 +200,14 @@ class CategoryTable extends Component {
    return {
      upvotePost: (data) => dispatch(upvotePost(data)),
      downvotePost: (data) => dispatch(downvotePost(data)),
+     deletePost: (data) => dispatch(deletePost(data)),
      updatePost: (data) => dispatch(updatePost(data)),
      setPosts: (data) => dispatch(setPosts(data)),
      updateComment: (data) => dispatch(updateComment(data)),
    }
  }
 
-export default withRouter(connect(
+export default connect(
    mapStateToProps,
    mapDispatchToProps
- )(CategoryTable))
+ )(CategoryTable)

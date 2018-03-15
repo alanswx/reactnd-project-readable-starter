@@ -1,34 +1,37 @@
 import React, { Component } from 'react';
 import {  Item } from 'semantic-ui-react'
-import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
+import {  updatePost, setPosts, updateComment, deletePost} from '../actions'
 import { connect } from 'react-redux'
 import  Timestamp from 'react-timestamp';
 import { Menu } from 'semantic-ui-react'
-import { withRouter } from 'react-router'
-import * as ReadableAPI from '../utils/ReadableAPI'
 import { Icon } from 'semantic-ui-react'
 import CommentsList from './CommentsList.js'
 import { Link } from 'react-router-dom'
+import PropTypes from "prop-types";
 
 
 
 class PostDetail extends Component {
 
-  state = {
-    comments: null,
-  }
 
+    static contextTypes = {
+      router: PropTypes.shape({
+        history: PropTypes.shape({
+          push: PropTypes.func.isRequired,
+          replace: PropTypes.func.isRequired
+        }).isRequired,
+        staticContext: PropTypes.object
+      }).isRequired
+    };
 
-  componentDidMount(){
+    handleDelete = (id) => {
+      this.props.deletePost(id)
 
-    ReadableAPI.getCommentsForPost(this.props.id).then((comments)=>{
-      console.log(comments)
-      this.setState(() => ({
-        comments: comments,
-      }))
-
-    })
-  }
+      // or we can "push" a different destination
+      // goback is nice because it takes you back to where you came from
+      this.context.router.history.goBack()
+      //this.context.router.history.push('')
+    }
 
 
   /* some of the sort code, and formatting taken from semantic ui example code  */
@@ -60,13 +63,13 @@ class PostDetail extends Component {
 
 
                 <Menu.Menu position='right'>
-                <Menu.Item name='edit'>
-                <Link to={"/post/edit/" + post.id}>
-                <Icon name='pencil' />
-                </Link>
+                  <Menu.Item name='edit'>
+                    <Link to={"/post/edit/" + post.id}>
+                      <Icon name='pencil' />
+                    </Link>
                 </Menu.Item>
-                <Menu.Item name='trash'  onClick={this.handleTrashItemClick}>
-                <Icon link name='trash outline' />
+                <Menu.Item name='trash'  onClick={()=>this.handleDelete(post.id)}>
+                  <Icon link name='trash outline' />
                 </Menu.Item>
                 </Menu.Menu>
               </Menu>
@@ -85,7 +88,7 @@ class PostDetail extends Component {
                     <span>Published: <Timestamp time={post.timestamp/1000} format='ago'/></span>
                     </Item.Meta>
                     <Item.Description>{post.body}</Item.Description>
-                    <CommentsList comments={this.state.comments}/>
+                    <CommentsList post={post}/>
 
                   </Item.Content>
                 </Item>
@@ -116,15 +119,15 @@ class PostDetail extends Component {
 
  function mapDispatchToProps (dispatch) {
    return {
-     upvotePost: (data) => dispatch(upvotePost(data)),
-     downvotePost: (data) => dispatch(downvotePost(data)),
      updatePost: (data) => dispatch(updatePost(data)),
      setPosts: (data) => dispatch(setPosts(data)),
      updateComment: (data) => dispatch(updateComment(data)),
+     deletePost: (data) => dispatch(deletePost(data)),
+
    }
  }
 
-export default withRouter(connect(
+export default connect(
    mapStateToProps,
    mapDispatchToProps
- )(PostDetail))
+ )(PostDetail)

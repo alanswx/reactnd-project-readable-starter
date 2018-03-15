@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
+import { upvotePost, downvotePost, updatePost, newPost, setPosts, updateComment} from '../actions'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router'
 import { Form, TextArea, Button } from 'semantic-ui-react'
 import PropTypes from "prop-types";
 
@@ -18,12 +17,11 @@ class PostEdit extends Component {
     deleted: this.props.post.deleted,
     id: this.props.post.id,
     timestamp: this.props.post.timestamp,
-    voteScore: this.props.post.voteScore
+    voteScore: this.props.post.voteScore,
+    newPost: this.props.post.newPost
 
   }
 
-// AJS TODO: where do we handle if this is a new post, vs an edit - we
-// need to create a unique id (uuid?) and set the commentCount to 0 etc.
 
   componentWillReceiveProps(nextProps) {
       if (nextProps.post) {
@@ -36,8 +34,8 @@ class PostEdit extends Component {
           deleted: nextProps.post.deleted,
           id: nextProps.post.id,
           timestamp: nextProps.post.timestamp,
-          voteScore: nextProps.post.voteScore
-
+          voteScore: nextProps.post.voteScore,
+          newPost: nextProps.post.newPost
         })
       }
     }
@@ -86,7 +84,13 @@ class PostEdit extends Component {
       voteScore: voteScore
     }
     console.log(newPost)
-    this.props.updatePost(newPost)
+    if (this.state.newPost===true) {
+      this.props.newPost(newPost)
+    }
+    else {
+      this.props.updatePost(newPost)
+
+    }
 //    setPost
 //    updatePost
     this.context.router.history.goBack()
@@ -147,9 +151,13 @@ class PostEdit extends Component {
      commentCount: 0,
      deleted: false,
      id: ownProps.id,
-     timestamp: Date.now(), // TODO AJS - add time from javascript
+     timestamp: Date.now(),
      title: '',
-     voteScore: 0
+     voteScore: 0,
+     newPost: true
+   }
+   else {
+     thisPost.newPost=false
    }
 
    console.log("mapStateToProps")
@@ -165,12 +173,13 @@ class PostEdit extends Component {
      upvotePost: (data) => dispatch(upvotePost(data)),
      downvotePost: (data) => dispatch(downvotePost(data)),
      updatePost: (data) => dispatch(updatePost(data)),
+     newPost: (data) => dispatch(newPost(data)),
      setPosts: (data) => dispatch(setPosts(data)),
      updateComment: (data) => dispatch(updateComment(data)),
    }
  }
 
-export default withRouter(connect(
+export default connect(
    mapStateToProps,
    mapDispatchToProps
- )(PostEdit))
+ )(PostEdit)

@@ -23,15 +23,20 @@ class App extends Component {
 
   componentDidMount(){
     ReadableAPI.getCategories().then((categories)=>{
-      console.log(categories)
       this.setState(() => ({
         categories: categories,
       }))
 
     })
     ReadableAPI.getAllPosts().then((posts)=>{
-      console.log(posts)
-      this.props.setPosts(posts)
+      // It is much more convenient if we reorder the posts to be in
+      // an associative array with the keys as the ID instead of 0,1,2 as it comes
+      // back from the server now
+      let newPosts = {}
+      for (const value of Object.values(posts)) {
+        newPosts[value.id]=value
+      }
+      this.props.setPosts(newPosts)
     })
   }
 

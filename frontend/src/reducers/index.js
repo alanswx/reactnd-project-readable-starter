@@ -2,40 +2,40 @@ import {combineReducers} from 'redux'
 import {
   UPVOTE_POST,
   DOWNVOTE_POST,
+  DELETE_POST,
+  UPVOTE_COMMENT,
+  DOWNVOTE_COMMENT,
+  DELETE_COMMENT,
   UPDATE_POST,
   SET_POSTS,
-  UPDATE_COMMENT
+  UPDATE_COMMENT,
+  SET_COMMENTS,
+  CLEAR_COMMENTS
 } from '../actions'
 
 
 // AJS TODO -- THIS IS BROKEN -- loop through the state, until we match the id
 
 function posts (state={},action) {
+  let newState = {...state}
   switch(action.type){
     case UPVOTE_POST:
-    //console.log(state)
-
-
-    for (const [key, value] of Object.entries(state)) {
-      //console.log(key)
-      //console.log(value)
+      for (const value of Object.values(newState)) {
       if (value.id===action.postid)
       {
         value.voteScore++
       }
      }
-    return state
+    return newState
 
     case DOWNVOTE_POST:
-      for (const [key, value] of Object.entries(state)) {
-        //console.log(key)
-        //console.log(value)
+      for (const value of Object.values(newState)) {
         if (value.id===action.postid)
         {
           value.voteScore--
         }
        }
-      return state
+      return newState
     case UPDATE_POST:
       state[action.post.id] = {
         ...action.post
@@ -44,7 +44,14 @@ function posts (state={},action) {
         ...state
       }
 
-
+    case DELETE_POST:
+    for (const value of Object.values(newState)) {
+      if (value.id===action.postid)
+      {
+        value.deleted=true
+      }
+     }
+     return newState
     case SET_POSTS:
      const {posts }= action
      return {
@@ -56,89 +63,54 @@ function posts (state={},action) {
 }
 
 function comment(state={},action){
+  let newState = {...state}
   switch(action.type){
+    case UPVOTE_COMMENT:
+    for (const value of Object.values(newState)) {
+      if (value.id===action.commentid)
+      {
+        value.voteScore++
+      }
+     }
+    return newState
+
+    case DOWNVOTE_COMMENT:
+    for (const value of Object.values(newState)) {
+      if (value.id===action.commentid)
+      {
+        value.voteScore--
+      }
+     }
+    return newState
+
+    case DELETE_COMMENT:
+    for (const value of Object.values(newState)) {
+      if (value.id===action.commentid)
+      {
+        value.deleted=true
+      }
+     }
+    return newState
+
+
+
+    case SET_COMMENTS:
+     let newComments = {}
+     for (const value of Object.values(action.data)) {
+       newComments[value.id]=value
+     }
+     return newComments
+     case CLEAR_COMMENTS:
+       return {}
     case UPDATE_COMMENT:
+      newState[action.comment.id]=action.comment
+      return newState
     default:
       return state
   }
 }
-/*
-function food (state={}, action){
-  switch (action.type){
-    case ADD_RECIPE:
-    const { recipe } = action
 
-    return {
-      ...state,
-       [recipe.label]: recipe
-    }
-    default:
-      return state
-  }
-}
-const initialCalendarState = {
-  sunday: {
-    breakfast: null,
-    lunch: null,
-    dinner: null,
-  },
-  monday: {
-    breakfast: null,
-    lunch: null,
-    dinner: null,
-  },
-  tuesday: {
-    breakfast: null,
-    lunch: null,
-    dinner: null,
-  },
-  wednesday: {
-    breakfast: null,
-    lunch: null,
-    dinner: null,
-  },
-  thursday: {
-    breakfast: null,
-    lunch: null,
-    dinner: null,
-  },
-  friday: {
-    breakfast: null,
-    lunch: null,
-    dinner: null,
-  },
-  saturday: {
-    breakfast: null,
-    lunch: null,
-    dinner: null,
-  },
-}
 
-function calendar (state = initialCalendarState, action) {
-  const { day, recipe, meal } = action
-
-  switch (action.type) {
-    case ADD_RECIPE :
-      return {
-        ...state,
-        [day]: {
-          ...state[day],
-          [meal]: recipe.label,
-        }
-      }
-    case REMOVE_FROM_CALENDAR :
-      return {
-        ...state,
-        [day]: {
-          ...state[day],
-          [meal]: null,
-        }
-      }
-    default :
-      return state
-  }
-}
-*/
 export default combineReducers({
   posts,
   comment
