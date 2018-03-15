@@ -153,6 +153,17 @@ fetch(`${api}/posts/`,  { method: 'POST', body: JSON.stringify({
   }
 }
 
+export function loadPosts(){
+
+  return(dispatch) => {
+  fetch(`${api}/posts/`,  { method: 'GET', headers } )
+    .then(res => res.json())
+    .then( posts=> dispatch({
+      type: SET_POSTS,
+      posts
+      }))
+    }
+}
 
 
 

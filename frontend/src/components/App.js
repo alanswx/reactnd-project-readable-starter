@@ -6,7 +6,7 @@ import * as ReadableAPI from '../utils/ReadableAPI'
 import CategoryTable from './CategoryTable.js'
 import PostDetail from './PostDetail.js'
 import PostEdit from './PostEdit.js'
-import { upvotePost, downvotePost, updatePost, setPosts, updateComment} from '../actions'
+import { loadPosts } from '../actions'
 import { withRouter } from 'react-router'
 import { Header, Icon } from 'semantic-ui-react'
 
@@ -31,17 +31,8 @@ class App extends Component {
 
     })
 
-    /* it might make sense to replace this with a thunk */
-    ReadableAPI.getAllPosts().then((posts)=>{
-      // It is much more convenient if we reorder the posts to be in
-      // an associative array with the keys as the ID instead of 0,1,2 as it comes
-      // back from the server now
-      let newPosts = {}
-      for (const value of Object.values(posts)) {
-        newPosts[value.id]=value
-      }
-      this.props.setPosts(newPosts)
-    })
+    this.props.loadPosts()
+
   }
 
   render() {
@@ -83,7 +74,7 @@ function mapStateToProps ({ posts, comment }) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    setPosts: (data) => dispatch(setPosts(data)),
+    loadPosts: (data) => dispatch(loadPosts(data)),
   }
 }
 export default withRouter(connect(
