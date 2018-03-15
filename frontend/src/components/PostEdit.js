@@ -132,7 +132,7 @@ class PostEdit extends Component {
             <Breadcrumb.Divider icon='right chevron' />
             <Breadcrumb.Section ><Link to={"/"+(this.state.category?this.state.category:"unknown")+"/"+this.state.id}>Post</Link></Breadcrumb.Section>
             <Breadcrumb.Divider icon='right chevron' />
-            <Breadcrumb.Section active><Link to={"/"}>Edit</Link></Breadcrumb.Section>
+            <Breadcrumb.Section active>Edit</Breadcrumb.Section>
           </Breadcrumb>
           <Form onSubmit={this.handleSubmit}>
             <Form.Input  label='Title' placeholder='Title' name='title'  value={this.state.title} onChange={this.handleChange} />

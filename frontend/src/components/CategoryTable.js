@@ -27,8 +27,8 @@ class CategoryTable extends Component {
    From:
    https://stackoverflow.com/questions/29244731/react-router-how-to-manually-invoke-link
   */
-
-      static contextTypes = {
+  /* pull in the structure so we can use the router history */
+  static contextTypes = {
         router: PropTypes.shape({
           history: PropTypes.shape({
             push: PropTypes.func.isRequired,
@@ -38,7 +38,8 @@ class CategoryTable extends Component {
         }).isRequired
       };
 
-      handleCategoryItemClick = (e, { name }) => {
+  /* change the category url when we click on the menu */
+  handleCategoryItemClick = (e, { name }) => {
         //this.setState({ category: name })
         let newPath = "/"
         if (name!=="all")
@@ -46,12 +47,14 @@ class CategoryTable extends Component {
         this.context.router.history.push(newPath)
       }
 
-      handleNewItemClick = (e, { name }) => {
+  /* create a new UUID and go to the edit page for that UUID for a new post */
+  handleNewItemClick = (e, { name }) => {
         // create a UUID
         let newPath = "/post/edit/"+UUID.v4()
         this.context.router.history.push(newPath)
   }
 
+  /* the sorting sets local state, this is read during render to render the table correctly */
   handleSort = clickedColumn => () => {
     const { column, direction } = this.state
 
@@ -68,6 +71,8 @@ class CategoryTable extends Component {
       direction: direction === 'ascending' ? 'descending' : 'ascending',
     })
   }
+
+/* this function is used to sort the array based on the column sorting */
 /* FROM: https://codepen.io/austinlyons/pen/YpmyJB */
   compareBy(key) {
     return function (a, b) {
@@ -82,17 +87,6 @@ class CategoryTable extends Component {
 
   render() {
 
-    /*
-            author
-            body
-            category
-            commentCount
-            deleted
-            id
-            timestamp
-            title
-            voteScore
-    */
     const { column, direction } = this.state
     const { posts, categories } = this.props
 
@@ -110,29 +104,29 @@ class CategoryTable extends Component {
       arrayCopy.reverse()
     return (
       <div>
-      <Breadcrumb size='mini'>
-        <Breadcrumb.Section active>Home</Breadcrumb.Section>
-      </Breadcrumb>
-      <Menu>
-      <Menu.Item>
-        <b>Category:</b>
-      </Menu.Item>
-      <Menu.Item key='all' name='all' active={category === null || category ==="all"} onClick={this.handleCategoryItemClick}>
-        All
-      </Menu.Item>
-      {
-        categories && categories.categories.map( (cat)=> {
-          return (
-            <Menu.Item key={cat.path} name={cat.path} active={category === cat.path} onClick={this.handleCategoryItemClick}>
-              {cat.name}
+        <Breadcrumb size='mini'>
+          <Breadcrumb.Section active>Home</Breadcrumb.Section>
+          </Breadcrumb>
+          <Menu>
+            <Menu.Item>
+              <b>Category:</b>
             </Menu.Item>
-          )
-        })
-      }
+            <Menu.Item key='all' name='all' active={category === null || category ==="all"} onClick={this.handleCategoryItemClick}>
+              All
+            </Menu.Item>
+            {
+              categories && categories.categories.map( (cat)=> {
+              return (
+                <Menu.Item key={cat.path} name={cat.path} active={category === cat.path} onClick={this.handleCategoryItemClick}>
+                {cat.name}
+                </Menu.Item>
+                )
+              })
+            }
 
         <Menu.Menu position='right'>
           <Menu.Item name='new' active={category === 'new'} onClick={this.handleNewItemClick}>
-           New Post
+            <Icon name='add' /> New Post
           </Menu.Item>
         </Menu.Menu>
       </Menu>
@@ -166,12 +160,13 @@ class CategoryTable extends Component {
 
         <Table.Body>
 
-          {arrayCopy && arrayCopy.length && arrayCopy.filter( (table)=>{return (category===null || category==='all' || table.category===category)}).map( (table) => {
-            if (table.deleted===true) {
+        {arrayCopy && arrayCopy.length && arrayCopy.filter( (table)=>{return (category===null || category==='all' || table.category===category)}).map( (table) => {
+          if (table.deleted===true) {
               return ( '' )
-            }
-            else {
-              return (<Table.Row key={table.id}>
+          }
+        else {
+          return (
+            <Table.Row key={table.id}>
               <Table.Cell><Link to={"/"+table.category+"/" + table.id}>{table.title}</Link></Table.Cell>
               <Table.Cell>{table.author}</Table.Cell>
               <Table.Cell>{table.category}</Table.Cell>
@@ -179,22 +174,21 @@ class CategoryTable extends Component {
               <Table.Cell>{table.commentCount}</Table.Cell>
               <Table.Cell><Timestamp time={table.timestamp/1000} format='ago'/></Table.Cell>
               <Table.Cell>
-              <List horizontal link>
-               <List.Item as='a' icon='thumbs outline up' onClick={()=>this.props.upvotePost(table.id)}/>
-                <List.Item as='a' icon='thumbs outline down' onClick={()=>this.props.downvotePost(table.id)}/>
-                <List.Item><Link to={"/post/edit/" + table.id}><Icon name='pencil' /></Link></List.Item>
-                <List.Item as='a' icon='trash' onClick={()=>this.props.deletePost(table.id)}/>
-              </List>
+                <List horizontal link>
+                  <List.Item as='a' icon='thumbs outline up' onClick={()=>this.props.upvotePost(table.id)}/>
+                  <List.Item as='a' icon='thumbs outline down' onClick={()=>this.props.downvotePost(table.id)}/>
+                  <List.Item><Link to={"/post/edit/" + table.id}><Icon name='pencil' /></Link></List.Item>
+                  <List.Item as='a' icon='trash' onClick={()=>this.props.deletePost(table.id)}/>
+                </List>
               </Table.Cell>
             </Table.Row>)
           }
           })
         }
-          </Table.Body>
+        </Table.Body>
 
       </Table>
       </div>
-
     )
   }
  }

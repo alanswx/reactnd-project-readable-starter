@@ -9,6 +9,7 @@ import {default as UUID} from "node-uuid";
 
 class CommentsList extends Component {
 
+  /* we keep a local state of all the comments so we can edit them here */
   state = {
     editList: [],
     comments: this.props.comments,
@@ -18,6 +19,9 @@ class CommentsList extends Component {
 
   componentWillReceiveProps(nextProps){
     //console.log("componentWillReceiveProps"+nextProps)
+    /* we keep one global comment list in redux, when the post change,
+       this causes the global comments to clear, and set to the new one
+    */
     if (this.props.post.id!==nextProps.post.id) {
       this.props.clearComments()
       // if there are no comments but comment count > 0 then load them
@@ -26,7 +30,7 @@ class CommentsList extends Component {
       }
     }
 
-    /* create a new blank comment */
+    /* create a new blank comment - so we can always add a new comment */
     let newComment = {
       author: '',
       body: '',
