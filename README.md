@@ -2,7 +2,7 @@
 
 This project is a simplified version of a message board. It allows users to add and edit posts and comments. It also let's you tag posts with 1 of 3 categories.
 
-This was a great project to get a handle on Redux. My first pass I wasn't using the thunk pattern, i was trying to do the update in the code, and call a normal action afterwards.  This became clunky, and the code seemed a lot more straightforward once I changed this. 
+This was a great project to learn Redux. My first pass I wasn't using the thunk pattern, I was trying to do the update in the code, and call a normal action afterwards.  This became clunky, and the code seemed a lot more straightforward once I started using thunks. 
 
 There are some obvious shortcomings:
 
